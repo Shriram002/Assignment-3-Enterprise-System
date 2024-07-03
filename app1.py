@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -7,7 +7,7 @@ app1.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.db'
 db = SQLAlchemy(app1)
 
 class Student(db.Model):
-    student_id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     dob = db.Column(db.Date, nullable=False)

@@ -1,76 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Flask API Frontend</title>
-    <script>
-        async function createStudent() {
-            const data = {
-                first_name: "John",
-                last_name: "Doe",
-                dob: "2000-01-01",
-                amount_due: 500.0
-            };
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
+</head>
+<body>
+    <h1>Student Management</h1>
+    <form id="studentForm">
+        <input type="text" id="firstName" placeholder="First Name" required>
+        <input type="text" id="lastName" placeholder="Last Name" required>
+        <input type="date" id="dob" placeholder="Date of Birth" required>
+        <input type="number" id="amountDue" placeholder="Amount Due" required>
+        <button type="submit">Add Student</button>
+    </form>
+    
+    <h2>All Students</h2>
+    <button onclick="fetchStudents()">Refresh List</button>
+    <ul id="studentList"></ul>
 
-            const response = await fetch('http://127.0.0.1:5000/student', {
+    <script>
+        const apiUrl = 'http://127.0.0.1:5000';
+
+        document.getElementById('studentForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const dob = document.getElementById('dob').value;
+            const amountDue = document.getElementById('amountDue').value;
+
+            const response = await fetch(`${apiUrl}/student`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify({
+                    first_name: firstName,
+                    last_name: lastName,
+                    dob: dob,
+                    amount_due: amountDue
+                })
             });
 
             const result = await response.json();
-            console.log(result);
-        }
+            alert(result.message);
+            fetchStudents();
+        });
 
-        async function getStudent() {
-            const response = await fetch('http://127.0.0.1:5000/student/1');
-            const result = await response.json();
-            console.log(result);
-        }
-
-        async function updateStudent() {
-            const data = {
-                first_name: "Jane",
-                last_name: "Doe",
-                dob: "2000-01-01",
-                amount_due: 700.0
-            };
-
-            const response = await fetch('http://127.0.0.1:5000/student/1', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
+        async function fetchStudents() {
+            const response = await fetch(`${apiUrl}/students`);
+            const students = await response.json();
+            const studentList = document.getElementById('studentList');
+            studentList.innerHTML = '';
+            students.forEach(student => {
+                const li = document.createElement('li');
+                li.textContent = `${student.first_name} ${student.last_name} - DOB: ${student.dob} - Amount Due: ${student.amount_due}`;
+                studentList.appendChild(li);
             });
-
-            const result = await response.json();
-            console.log(result);
         }
 
-        async function deleteStudent() {
-            const response = await fetch('http://127.0.0.1:5000/student/1', {
-                method: 'DELETE'
-            });
-
-            const result = await response.json();
-            console.log(result);
-        }
-
-        async function getAllStudents() {
-            const response = await fetch('http://127.0.0.1:5000/students');
-            const result = await response.json();
-            console.log(result);
-        }
+        // Load students on page load
+        fetchStudents();
     </script>
-</head>
-<body>
-    <h1>Flask API Frontend</h1>
-    <button onclick="createStudent()">Create Student</button>
-    <button onclick="getStudent()">Get Student</button>
-    <button onclick="updateStudent()">Update Student</button>
-    <button onclick="deleteStudent()">Delete Student</button>
-    <button onclick="getAllStudents()">Get All Students</button>
 </body>
 </html>
