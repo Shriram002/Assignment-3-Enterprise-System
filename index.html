@@ -8,11 +8,12 @@
 <body>
     <h1>Student Management</h1>
     <form id="studentForm">
+        <input type="text" id="studentId" placeholder="Student ID (for update only)" style="display: none;">
         <input type="text" id="firstName" placeholder="First Name" required>
         <input type="text" id="lastName" placeholder="Last Name" required>
         <input type="date" id="dob" placeholder="Date of Birth" required>
         <input type="number" id="amountDue" placeholder="Amount Due" required>
-        <button type="submit">Add Student</button>
+        <button type="submit">Add/Update Student</button>
     </form>
     
     <h2>All Students</h2>
@@ -24,26 +25,42 @@
 
         document.getElementById('studentForm').addEventListener('submit', async (event) => {
             event.preventDefault();
+            const studentId = document.getElementById('studentId').value;
             const firstName = document.getElementById('firstName').value;
             const lastName = document.getElementById('lastName').value;
             const dob = document.getElementById('dob').value;
             const amountDue = document.getElementById('amountDue').value;
 
-            const response = await fetch(`${apiUrl}/student`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    first_name: firstName,
-                    last_name: lastName,
-                    dob: dob,
-                    amount_due: amountDue
-                })
-            });
+            const data = {
+                first_name: firstName,
+                last_name: lastName,
+                dob: dob,
+                amount_due: amountDue
+            };
 
-            const result = await response.json();
-            alert(result.message);
+            if (studentId) {
+                const response = await fetch(`${apiUrl}/student/${studentId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                alert(result.message);
+            } else {
+                const response = await fetch(`${apiUrl}/student`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                alert(result.message);
+            }
+
+            document.getElementById('studentForm').reset();
             fetchStudents();
         });
 
@@ -54,9 +71,32 @@
             studentList.innerHTML = '';
             students.forEach(student => {
                 const li = document.createElement('li');
-                li.textContent = `${student.first_name} ${student.last_name} - DOB: ${student.dob} - Amount Due: ${student.amount_due}`;
+                li.innerHTML = `${student.first_name} ${student.last_name} - DOB: ${student.dob} - Amount Due: ${student.amount_due}
+                    <button onclick="deleteStudent(${student.student_id})">Delete</button>
+                    <button onclick="populateForm(${student.student_id}, '${student.first_name}', '${student.last_name}', '${student.dob}', ${student.amount_due})">Update</button>`;
                 studentList.appendChild(li);
             });
+        }
+
+        async function deleteStudent(studentId) {
+            const response = await fetch(`${apiUrl}/student/${studentId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const result = await response.json();
+            alert(result.message);
+            fetchStudents();
+        }
+
+        function populateForm(studentId, firstName, lastName, dob, amountDue) {
+            document.getElementById('studentId').value = studentId;
+            document.getElementById('firstName').value = firstName;
+            document.getElementById('lastName').value = lastName;
+            document.getElementById('dob').value = dob;
+            document.getElementById('amountDue').value = amountDue;
+            document.getElementById('studentId').style.display = 'block';
         }
 
         // Load students on page load
