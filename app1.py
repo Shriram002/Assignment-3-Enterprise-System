@@ -15,7 +15,7 @@ class Student(db.Model):
 
 @app1.route('/')
 def index():
-    return "Welcome to the Flask API!"
+    return send_from_directory('', 'index.html')
 
 # Create Operation
 @app1.route('/student', methods=['POST'])
