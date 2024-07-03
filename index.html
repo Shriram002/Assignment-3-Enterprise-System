@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask API Frontend</title>
+    <script>
+        async function createStudent() {
+            const data = {
+                first_name: "John",
+                last_name: "Doe",
+                dob: "2000-01-01",
+                amount_due: 500.0
+            };
+
+            const response = await fetch('http://127.0.0.1:5000/student', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            console.log(result);
+        }
+
+        async function getStudent() {
+            const response = await fetch('http://127.0.0.1:5000/student/1');
+            const result = await response.json();
+            console.log(result);
+        }
+
+        async function updateStudent() {
+            const data = {
+                first_name: "Jane",
+                last_name: "Doe",
+                dob: "2000-01-01",
+                amount_due: 700.0
+            };
+
+            const response = await fetch('http://127.0.0.1:5000/student/1', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            console.log(result);
+        }
+
+        async function deleteStudent() {
+            const response = await fetch('http://127.0.0.1:5000/student/1', {
+                method: 'DELETE'
+            });
+
+            const result = await response.json();
+            console.log(result);
+        }
+
+        async function getAllStudents() {
+            const response = await fetch('http://127.0.0.1:5000/students');
+            const result = await response.json();
+            console.log(result);
+        }
+    </script>
+</head>
+<body>
+    <h1>Flask API Frontend</h1>
+    <button onclick="createStudent()">Create Student</button>
+    <button onclick="getStudent()">Get Student</button>
+    <button onclick="updateStudent()">Update Student</button>
+    <button onclick="deleteStudent()">Delete Student</button>
+    <button onclick="getAllStudents()">Get All Students</button>
+</body>
+</html>

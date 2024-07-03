@@ -7,7 +7,7 @@ app1.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.db'
 db = SQLAlchemy(app1)
 
 class Student(db.Model):
-    student_id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, primary_key=True, autoincrement= True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     dob = db.Column(db.Date, nullable=False)
@@ -24,5 +24,5 @@ with app1.app_context():
     ]
 
     # Add and commit the initial data0
-    db.session.add_all(initial_students)
+    db.session.bulk_save_objects(initial_students)
     db.session.commit()
