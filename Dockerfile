@@ -19,4 +19,4 @@ EXPOSE 10000
 ENV FLASK_APP=app.py
 
 # Run flask app when the container launches
-CMD ["flask", "run", "--host=0.0.0.0", "--port=10000"]
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
