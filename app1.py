@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import os
 
 app1 = Flask(__name__)
 app1.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.db'
@@ -82,4 +83,5 @@ def get_students():
     return jsonify(student_list)
 
 if __name__ == '__main__':
-    app1.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app1.run(host='0.0.0.0', port=port)
