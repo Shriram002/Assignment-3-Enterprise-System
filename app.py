@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
+import requests
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.db'
@@ -82,6 +83,15 @@ def get_students():
         student_list.append(student_data)
     return jsonify(student_list)
 
+@app.route('/config', methods=['GET'])
+def get_config():
+    # Detect public IP address
+    public_ip = requests.get('https://api.ipify.org').text
+    return jsonify({
+        'api_url': f'http://{public_ip}:5000',
+        'another_url': f'http://{public_ip}:5000'
+    })
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=port)

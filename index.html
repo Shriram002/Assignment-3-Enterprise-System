@@ -21,87 +21,93 @@
     <ul id="studentList"></ul>
 
     <script>
-        const apiUrl = 'http://192.168.2.189:5000';
-        const anotherUrl = 'http://127.0.0.1:5000';
+        async function fetchConfig() {
+            const response = await fetch('/config');
+            const config = await response.json();
+            const apiUrl = config.api_url;
+            const anotherUrl = config.another_url;
 
-        document.getElementById('studentForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const studentId = document.getElementById('studentId').value;
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
-            const dob = document.getElementById('dob').value;
-            const amountDue = document.getElementById('amountDue').value;
+            document.getElementById('studentForm').addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const studentId = document.getElementById('studentId').value;
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                const dob = document.getElementById('dob').value;
+                const amountDue = document.getElementById('amountDue').value;
 
-            const data = {
-                first_name: firstName,
-                last_name: lastName,
-                dob: dob,
-                amount_due: amountDue
-            };
+                const data = {
+                    first_name: firstName,
+                    last_name: lastName,
+                    dob: dob,
+                    amount_due: amountDue
+                };
 
-            if (studentId) {
-                const response = await fetch(`${apiUrl}/student/${studentId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
+                if (studentId) {
+                    const response = await fetch(`${apiUrl}/student/${studentId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    const result = await response.json();
+                    alert(result.message);
+                } else {
+                    const response = await fetch(`${apiUrl}/student`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    const result = await response.json();
+                    alert(result.message);
+                }
+
+                document.getElementById('studentForm').reset();
+                fetchStudents();
+            });
+
+            async function fetchStudents() {
+                const response = await fetch(`${apiUrl}/students`);
+                const students = await response.json();
+                const studentList = document.getElementById('studentList');
+                studentList.innerHTML = '';
+                students.forEach(student => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `${student.first_name} ${student.last_name} - DOB: ${student.dob} - Amount Due: ${student.amount_due}
+                        <button onclick="deleteStudent(${student.student_id})">Delete</button>
+                        <button onclick="populateForm(${student.student_id}, '${student.first_name}', '${student.last_name}', '${student.dob}', ${student.amount_due})">Update</button>`;
+                    studentList.appendChild(li);
                 });
-                const result = await response.json();
-                alert(result.message);
-            } else {
-                const response = await fetch(`${apiUrl}/student`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-                const result = await response.json();
-                alert(result.message);
             }
 
-            document.getElementById('studentForm').reset();
-            fetchStudents();
-        });
+            async function deleteStudent(studentId) {
+                const response = await fetch(`${apiUrl}/student/${studentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const result = await response.json();
+                alert(result.message);
+                fetchStudents();
+            }
 
-        async function fetchStudents() {
-            const response = await fetch(`${apiUrl}/students`);
-            const students = await response.json();
-            const studentList = document.getElementById('studentList');
-            studentList.innerHTML = '';
-            students.forEach(student => {
-                const li = document.createElement('li');
-                li.innerHTML = `${student.first_name} ${student.last_name} - DOB: ${student.dob} - Amount Due: ${student.amount_due}
-                    <button onclick="deleteStudent(${student.student_id})">Delete</button>
-                    <button onclick="populateForm(${student.student_id}, '${student.first_name}', '${student.last_name}', '${student.dob}', ${student.amount_due})">Update</button>`;
-                studentList.appendChild(li);
-            });
-        }
+            function populateForm(studentId, firstName, lastName, dob, amountDue) {
+                document.getElementById('studentId').value = studentId;
+                document.getElementById('firstName').value = firstName;
+                document.getElementById('lastName').value = lastName;
+                document.getElementById('dob').value = dob;
+                document.getElementById('amountDue').value = amountDue;
+                document.getElementById('studentId').style.display = 'block';
+            }
 
-        async function deleteStudent(studentId) {
-            const response = await fetch(`${apiUrl}/student/${studentId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            const result = await response.json();
-            alert(result.message);
+            // Load students on page load
             fetchStudents();
         }
 
-        function populateForm(studentId, firstName, lastName, dob, amountDue) {
-            document.getElementById('studentId').value = studentId;
-            document.getElementById('firstName').value = firstName;
-            document.getElementById('lastName').value = lastName;
-            document.getElementById('dob').value = dob;
-            document.getElementById('amountDue').value = amountDue;
-            document.getElementById('studentId').style.display = 'block';
-        }
-
-        // Load students on page load
-        fetchStudents();
+        fetchConfig();
     </script>
 </body>
 </html>
