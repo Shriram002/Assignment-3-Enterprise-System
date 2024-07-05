@@ -1,22 +1,21 @@
-# Use an official Python runtime as a parent image
-FROM python:3.8-slim-buster
+# Use the official Python image.
+# https://hub.docker.com/_/python
+FROM python:3.9-slim
 
-# Set the working directory in the container
+# Set the working directory.
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
+# Copy the current directory contents into the container at /app.
 COPY . /app
 
-# Install any needed packages specified in requirements.txt
-RUN apt-get update && \
-    apt-get install -y build-essential cmake libgtk-3-dev libboost-all-dev && \
-    pip install --no-cache-dir -r requirements.txt
+# Install any needed packages specified in requirements.txt.
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Make port 5000 available to the world outside this container
+# Make port 5000 available to the world outside this container.
 EXPOSE 5000
 
-# Define environment variable
-ENV FLASK_APP=app.py
+# Define environment variable.
+ENV NAME World
 
-# Run flask app when the container launches
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+# Run app.py when the container launches.
+CMD ["python", "app.py"]
