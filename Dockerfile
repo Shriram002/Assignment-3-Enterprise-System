@@ -12,8 +12,8 @@ RUN apt-get update && \
     apt-get install -y build-essential cmake libgtk-3-dev libboost-all-dev && \
     pip install --no-cache-dir -r requirements.txt
 
-# Make port 10000 available to the world outside this container
-EXPOSE 10000
+# Make port 5000 available to the world outside this container
+EXPOSE 5000
 
 # Define environment variable
 ENV FLASK_APP=app.py
