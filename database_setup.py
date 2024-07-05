@@ -1,8 +1,8 @@
-from flask import Flask
+from flask import Flask, request, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
-
+import requests
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///students.db')
