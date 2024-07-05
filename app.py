@@ -3,9 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
 
-app1 = Flask(__name__)
-app1.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.db'
-db = SQLAlchemy(app1)
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.db'
+db = SQLAlchemy(app)
 
 class Student(db.Model):
     student_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -14,12 +14,12 @@ class Student(db.Model):
     dob = db.Column(db.Date, nullable=False)
     amount_due = db.Column(db.Float, nullable=False)
 
-@app1.route('/')
+@app.route('/')
 def index():
     return send_from_directory('', 'index.html')
 
 # Create Operation
-@app1.route('/student', methods=['POST'])
+@app.route('/student', methods=['POST'])
 def add_student():
     data = request.get_json()
     new_student = Student(
@@ -33,7 +33,7 @@ def add_student():
     return jsonify({'message': 'Student added successfully!'})
 
 # Read Operation
-@app1.route('/student/<student_id>', methods=['GET'])
+@app.route('/student/<student_id>', methods=['GET'])
 def get_student(student_id):
     student = Student.query.get_or_404(student_id)
     return jsonify({
@@ -45,7 +45,7 @@ def get_student(student_id):
     })
 
 # Update Operation
-@app1.route('/student/<student_id>', methods=['PUT'])
+@app.route('/student/<student_id>', methods=['PUT'])
 def update_student(student_id):
     data = request.get_json()
     student = Student.query.get_or_404(student_id)
@@ -59,7 +59,7 @@ def update_student(student_id):
     return jsonify({'message': 'Student updated successfully!'})
 
 # Delete Operation
-@app1.route('/student/<student_id>', methods=['DELETE'])
+@app.route('/student/<student_id>', methods=['DELETE'])
 def delete_student(student_id):
     student = Student.query.get_or_404(student_id)
     db.session.delete(student)
@@ -67,7 +67,7 @@ def delete_student(student_id):
     return jsonify({'message': 'Student deleted successfully!'})
 
 # Show All Records
-@app1.route('/students', methods=['GET'])
+@app.route('/students', methods=['GET'])
 def get_students():
     students = Student.query.all()
     student_list = []
@@ -84,4 +84,4 @@ def get_students():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
-    app1.run(host='0.0.0.0', port=10000)
+    app.run(host='0.0.0.0', port=10000)

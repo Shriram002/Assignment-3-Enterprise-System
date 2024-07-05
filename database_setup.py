@@ -2,9 +2,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-app1 = Flask(__name__)
-app1.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.db'
-db = SQLAlchemy(app1)
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.db'
+db = SQLAlchemy(app)
 
 class Student(db.Model):
     student_id = db.Column(db.Integer, primary_key=True, autoincrement= True)
@@ -13,7 +13,7 @@ class Student(db.Model):
     dob = db.Column(db.Date, nullable=False)
     amount_due = db.Column(db.Float, nullable=False)
 
-with app1.app_context():
+with app.app_context():
     db.create_all()
 
     # Add initial data

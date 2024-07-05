@@ -16,7 +16,7 @@ RUN apt-get update && \
 EXPOSE 10000
 
 # Define environment variable
-ENV FLASK_APP=app1.py
+ENV FLASK_APP=app.py
 
 # Run flask app when the container launches
 CMD ["flask", "run", "--host=0.0.0.0", "--port=10000"]
