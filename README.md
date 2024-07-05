@@ -13,4 +13,7 @@ This is a Flask-based student management system that allows users to add, update
 
 - Python 3.7 or higher
 - pip (Python package installer)
-- AWS Account with necessary permissions
+- Creating Database
+- Flask
+- Created Website(Using HTML)
+- AWS Account with necessary permissions 
