@@ -88,8 +88,8 @@ def get_config():
     # Detect public IP address
     public_ip = requests.get('https://api.ipify.org').text
     return jsonify({
-        'api_url': f'http://{public_ip}:5000',
-        'another_url': f'http://{public_ip}:5000'
+        'api_url': f'http://192.168.2.189:5000',
+        'another_url': f'http://127.0.0.1:5000'
     })
 
 if __name__ == '__main__':
