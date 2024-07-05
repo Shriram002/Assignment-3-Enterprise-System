@@ -32,7 +32,7 @@ def add_student():
     )
     db.session.add(new_student)
     db.session.commit()
-    return jsonify({'message': 'Student added successfully!'})
+    return jsonify({'message': 'Student added successfully!'}), 201
 
 # Read Operation
 @app.route('/student/<student_id>', methods=['GET'])
@@ -47,42 +47,41 @@ def get_student(student_id):
     })
 
 # Update Operation
-@app.route('/student/<student_id>', methods=['PUT'])
+@app.route('/students/<int:student_id>', methods=['PUT'])
 def update_student(student_id):
-    data = request.get_json()
-    student = Student.query.get_or_404(student_id)
-
+    data = request.json
+    student = Student.query.get(student_id)
+    if student is None:
+        return jsonify({'message': 'Student not found'}), 404
     student.first_name = data['first_name']
     student.last_name = data['last_name']
     student.dob = datetime.strptime(data['dob'], '%Y-%m-%d')
     student.amount_due = data['amount_due']
-
     db.session.commit()
     return jsonify({'message': 'Student updated successfully!'})
 
 # Delete Operation
-@app.route('/student/<student_id>', methods=['DELETE'])
+@app.route('/students/<int:student_id>', methods=['DELETE'])
 def delete_student(student_id):
-    student = Student.query.get_or_404(student_id)
+    student = Student.query.get(student_id)
+    if student is None:
+        return jsonify({'message': 'Student not found'}), 404
     db.session.delete(student)
     db.session.commit()
     return jsonify({'message': 'Student deleted successfully!'})
 
 # Show All Records
+
 @app.route('/students', methods=['GET'])
 def get_students():
     students = Student.query.all()
-    student_list = []
-    for student in students:
-        student_data = {
-            'student_id': student.student_id,
-            'first_name': student.first_name,
-            'last_name': student.last_name,
-            'dob': student.dob.strftime('%Y-%m-%d'),
-            'amount_due': student.amount_due
-        }
-        student_list.append(student_data)
-    return jsonify(student_list)
+    return jsonify([{
+        'student_id': student.student_id,
+        'first_name': student.first_name,
+        'last_name': student.last_name,
+        'dob': student.dob.strftime('%Y-%m-%d'),
+        'amount_due': student.amount_due
+    } for student in students])
 
 @app.route('/config', methods=['GET'])
 def get_config():
