@@ -3,7 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///students.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 class Student(db.Model):
@@ -13,7 +14,8 @@ class Student(db.Model):
     dob = db.Column(db.Date, nullable=False)
     amount_due = db.Column(db.Float, nullable=False)
 
-with app.app_context():
+@app.before_first_request
+def init_db():
     db.create_all()
 
     # Check if the database is empty before adding initial data

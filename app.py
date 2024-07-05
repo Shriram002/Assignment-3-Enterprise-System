@@ -5,7 +5,8 @@ import os
 import requests
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///students.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 class Student(db.Model):
@@ -88,7 +89,7 @@ def get_config():
     # Detect public IP address
     public_ip = requests.get('https://api.ipify.org').text
     return jsonify({
-        'api_url': f'http://{public_ip}:5000',
+        'api_url': f'http://192.168.2.189:5000',
         'another_url': f'http://{public_ip}:5000'
     })
 
