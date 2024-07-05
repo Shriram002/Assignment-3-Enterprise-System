@@ -85,12 +85,16 @@ def get_students():
 
 @app.route('/config', methods=['GET'])
 def get_config():
-    # Detect public IP address
-    public_ip = requests.get('https://api.ipify.org').text
+    # Attempt to get public IP from Render's metadata service
+    try:
+        metadata_url = 'http://169.254.169.254/latest/meta-data/public-ipv4'
+        public_ip = requests.get(metadata_url).text
+    except:
+        public_ip = requests.get('https://api.ipify.org').text
+
     return jsonify({
         'api_url': f'http://{public_ip}:{os.getenv("PORT", 5000)}',
     })
-
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
